@@ -4,7 +4,7 @@ from typing import List
 import pickle
 
 # Charger le modèle
-with open("lsi2.pkl", "rb") as f:
+with open("projetML.pkl", "rb") as f:
     model = pickle.load(f)
 
 # Initialisation de l'API
@@ -12,15 +12,15 @@ app = FastAPI()
 
 # Définition des données d'entrée
 class PredictionRequest(BaseModel):
-    Genre: int
-    Ville: int
+    Gender: int
+    City: int
     Age: float
-    Revenu: float
-    Tolérance_au_Risque: int
-    Historique_d_Investissement: int
-    Objectif_Financier: int
-    Secteur_Préféré: str  # Exemple : "actions", "immobilier", etc.
-    Fréquence_d_Investissement: int
+    Income: float
+    Risk_Tolerance: int
+    Investment_History: int
+    Financial_Objective: int
+    Preferred_Sector: str  # Exemple : "actions", "immobilier", etc.
+    Investment_Frequency: int
     PreferredDomain: List[str]  # Liste des domaines préférés
 
 # Mapping des codes numériques des secteurs aux noms des secteurs
@@ -35,28 +35,28 @@ secteur_mapping = {
 
 @app.post("/predict/")
 async def predict(request: PredictionRequest):
-    secteur_prefered_code = {v: k for k, v in secteur_mapping.items()}.get(request.Secteur_Préféré.lower(), -1)
+    secteur_prefered_code = {v: k for k, v in secteur_mapping.items()}.get(request.Preferred_Sector.lower(), -1)
 
     if secteur_prefered_code == -1:
-        print(f"Erreur : Secteur préféré '{request.Secteur_Préféré}' non reconnu.")
+        print(f"Error : Preferred Sector '{request.Preferred_Sector}' unrecognized.")
 
-    historique_binaire = bin(request.Historique_d_Investissement)[2:].zfill(3)
+    historique_binaire = bin(request.Investment_History)[2:].zfill(3)
 
     input_data = [
-        request.Genre, request.Ville, request.Age, request.Revenu / 1000,  # Exemple de normalisation
-        request.Tolérance_au_Risque, int(historique_binaire, 2),
-        request.Objectif_Financier, secteur_prefered_code,
-        request.Fréquence_d_Investissement
+        request.Gender, request.City, request.Age, request.Income / 1000,  # Exemple de normalisation
+        request.Risk_Tolerance, int(historique_binaire, 2),
+        request.Financial_Objective, secteur_prefered_code,
+        request.Investment_Frequency
     ]
 
-    print(f"Données envoyées au modèle : {input_data}")
+    print(f"Data sent to the model : {input_data}")
     
     predicted_code = model.predict([input_data])[0]
-    secteur_recommande = secteur_mapping.get(int(predicted_code), "Inconnu")
+    secteur_recommande = secteur_mapping.get(int(predicted_code), "Unknown")
 
     return {
-        "domaine_recommandé": secteur_recommande,
-        "match_preferred_domain": request.Secteur_Préféré.lower() in [d.lower() for d in request.PreferredDomain],
-        "secteur_choisi": request.Secteur_Préféré,
-        "domaines_préférés_envoyés": request.PreferredDomain
+        "recommended_domain": secteur_recommande,
+        "match_preferred_domain": request.Preferred_Sector.lower() in [d.lower() for d in request.PreferredDomain],
+        "selected_sector": request.Preferred_Sector,
+        "preferred_domains_sent": request.PreferredDomain
     }
