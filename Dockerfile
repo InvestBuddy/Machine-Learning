@@ -1,25 +1,20 @@
-FROM python:3.12-slim
+# Use an official Python runtime as a parent image
+FROM python:3.11-slim-buster
 
+# Set the working directory in the container
 WORKDIR /app
 
-# Install build dependencies including libpq-dev and gcc (distutils, setuptools and pip are already included in the base image)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libpq-dev gcc python3-dev && \
-    rm -rf /var/lib/apt/lists/*
+# Copy the requirements file into the container
+COPY requirements.txt .
 
-# Upgrade pip
-RUN pip install --no-cache-dir --upgrade pip
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy requirements file
-COPY ./requirements.txt /app/requirements.txt
+# Copy the application code into the container
+COPY . .
 
-# Install Python dependencies using the upgraded pip
-RUN pip install --no-cache-dir -r /app/requirements.txt
+# Expose the port the app runs on
+EXPOSE 8000
 
-# Copy application code
-COPY . /app/
-
-EXPOSE 8087
-
-# Run the application
-CMD ["uvicorn", "app.Micro.py:app", "--host", "0.0.0.0", "--port", "8087"]
+# Command to run the application
+CMD ["uvicorn", "Micro:app", "--host", "0.0.0.0", "--port", "8000"]
