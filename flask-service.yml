@@ -16,14 +16,7 @@ spec:
         - name: flask-service
           image: abakhar217/flask-service:flask-service-<BUILD_NUMBER>
           ports:
-            - containerPort: 8083
-          env:
-            # Kafka Configuration
-            - name: KAFKA_BOOTSTRAP_SERVERS
-              value: "kafka-deployment:9092"
-            - name: KAFKA_TOPIC
-              value: "user-events" # You can change this based on your application topic
-
+            - containerPort: 8087  
 ---
 apiVersion: v1
 kind: Service
@@ -34,6 +27,6 @@ spec:
     app: flask-service
   ports:
     - protocol: TCP
-      port: 8083
-      targetPort: 8083
+      port: 8087
+      targetPort: 8087
   type: ClusterIP
