@@ -2,15 +2,18 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install build dependencies including build tools
+# Install build dependencies including distutils, setuptools and pip
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libpq-dev gcc python3-dev python3-distutils  python3-setuptools  && \
+    libpq-dev gcc python3-dev python3-distutils python3-setuptools && \
     rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip
+RUN pip install --no-cache-dir --upgrade pip
 
 # Copy requirements file
 COPY ./requirements.txt /app/requirements.txt
 
-# Install Python dependencies
+# Install Python dependencies using the upgraded pip
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
 # Copy application code
