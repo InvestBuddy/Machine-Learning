@@ -22,4 +22,4 @@ COPY . /app/
 EXPOSE 8087
 
 # Run the application
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8087"]
+CMD ["uvicorn", "app.Micro.py:app", "--host", "0.0.0.0", "--port", "8087"]
