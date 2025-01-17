@@ -2,9 +2,9 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install build dependencies including distutils, setuptools and pip
+# Install build dependencies including libpq-dev and gcc (distutils, setuptools and pip are already included in the base image)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libpq-dev gcc python3-dev python3-distutils python3-setuptools && \
+    libpq-dev gcc python3-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip
