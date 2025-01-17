@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 8000
 
 # Command to run the application
-CMD ["uvicorn", "Micro:app", "--host", "flask-service", "--port", "8000"]
+CMD ["uvicorn", "Micro:app", "--host", "0.0.0.0", "--port", "8000"]
